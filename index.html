@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sun International — AI-Driven Creative Control Center</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  /* Sun International Brand Colors */
+  --teal:#D4A843;--teal-light:#E8C86B;--teal-dark:#B08930;
+  --navy:#0A214F;--gold:#D4A843;--gold-light:#E8C86B;--gold-dark:#B08930;
+  --platinum:#7A99AC;--silver:#8A8D8F;
+  /* UI Colors */
+  --black:#060B14;--dark:#0C1220;--dark2:#111827;--dark-card:rgba(15,23,42,0.6);--dark-hover:rgba(20,30,55,0.7);
+  --text:#E8ECF2;--text-dim:#A0AABB;--text-muted:#64748B;
+  --green:#10B981;--green-bg:rgba(16,185,129,0.12);
+  --red:#EF4444;--red-bg:rgba(239,68,68,0.12);
+  --blue:#3B82F6;--blue-bg:rgba(59,130,246,0.12);
+  --purple:#8B5CF6;--purple-bg:rgba(139,92,246,0.12);
+  --orange:#F59E0B;--orange-bg:rgba(245,158,11,0.12);
+  --cyan:#06B6D4;--cyan-bg:rgba(6,182,212,0.12);
+  --pink:#EC4899;--pink-bg:rgba(236,72,153,0.12);
+  --sidebar-w:250px;
+  /* Glass */
+  --glass:rgba(15,23,42,0.45);--glass-border:rgba(255,255,255,0.08);--glass-hover:rgba(255,255,255,0.04);
+  --glass-light:rgba(255,255,255,0.04);--glass-accent:rgba(212,168,67,0.08);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--black);color:var(--text);overflow:hidden;height:100vh;}
+body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 20% 20%,rgba(212,168,67,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(10,33,79,0.1) 0%,transparent 50%),radial-gradient(ellipse at 50% 50%,rgba(132,117,78,0.04) 0%,transparent 60%);pointer-events:none;z-index:0;}
+a{color:var(--teal-light);text-decoration:none;}
+
+/* ===== GLASS UTILITY ===== */
+.glass{background:var(--glass);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border:1px solid var(--glass-border);}
+.glass-light{background:var(--glass-light);backdrop-filter:blur(12px) saturate(1.2);-webkit-backdrop-filter:blur(12px) saturate(1.2);border:1px solid var(--glass-border);}
+.glass-strong{background:rgba(15,23,42,0.7);backdrop-filter:blur(30px) saturate(1.6);-webkit-backdrop-filter:blur(30px) saturate(1.6);border:1px solid rgba(255,255,255,0.1);}
+
+/* ===== TOPBAR ===== */
+.topbar{height:58px;display:flex;align-items:center;padding:0 24px;background:rgba(12,18,32,0.7);backdrop-filter:blur(24px) saturate(1.5);-webkit-backdrop-filter:blur(24px) saturate(1.5);border-bottom:1px solid rgba(255,255,255,0.06);position:relative;z-index:100;gap:20px;}
+.topbar-left{display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.si-logo{height:28px;width:auto;opacity:0.95;filter:brightness(1.1);}
+.logo-text{font-size:15px;font-weight:600;letter-spacing:0.2px;white-space:nowrap;}
+.logo-text b{color:var(--teal-light);}
+.topbar-center{flex:1;display:flex;justify-content:center;padding:0 24px;min-width:0;}
+.search-wrap{position:relative;width:100%;max-width:400px;}
+.global-search{width:100%;padding:8px 14px 8px 36px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:10px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:all 0.25s;backdrop-filter:blur(8px);}
+.global-search:focus{border-color:var(--teal);background:rgba(255,255,255,0.06);box-shadow:0 0 0 3px rgba(212,168,67,0.15);}
+.global-search::placeholder{color:var(--text-muted);}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:13px;}
+.topbar-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.ai-live{display:flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:20px;font-size:11px;color:var(--green);font-weight:500;backdrop-filter:blur(8px);white-space:nowrap;}
+.ai-live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse-dot 2s infinite;}
+@keyframes pulse-dot{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.4);}50%{box-shadow:0 0 0 5px rgba(16,185,129,0);}}
+.top-btn{width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:14px;transition:all 0.2s;position:relative;backdrop-filter:blur(8px);}
+.top-btn:hover{border-color:rgba(232,200,107,0.3);color:var(--teal-light);background:rgba(212,168,67,0.08);}
+.top-btn .badge{position:absolute;top:-4px;right:-4px;width:16px;height:16px;background:var(--red);border-radius:50%;font-size:8px;font-weight:700;color:white;display:flex;align-items:center;justify-content:center;border:2px solid var(--dark);}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal-dark));display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;color:white;cursor:pointer;border:2px solid rgba(232,200,107,0.3);}
+
+/* ===== LAYOUT ===== */
+.app{display:flex;height:calc(100vh - 58px);position:relative;z-index:1;}
+
+/* ===== SIDEBAR ===== */
+.sidebar{width:var(--sidebar-w);background:rgba(12,18,32,0.5);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border-right:1px solid rgba(255,255,255,0.05);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;padding:16px 0;}
+.sb-section{margin-bottom:16px;}
+.sb-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);padding:0 18px;margin-bottom:6px;}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 18px;cursor:pointer;font-size:12.5px;font-weight:500;color:var(--text-muted);transition:all 0.2s;position:relative;user-select:none;border-radius:0;}
+.sb-item:hover{background:rgba(212,168,67,0.06);color:var(--text-dim);}
+.sb-item.active{color:var(--teal-light);background:rgba(212,168,67,0.1);}
+.sb-item.active::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:2px;background:var(--teal-light);border-radius:0 2px 2px 0;}
+.sb-item svg{width:15px;height:15px;flex-shrink:0;opacity:0.4;}
+.sb-item.active svg{opacity:1;}
+.sb-item .sb-badge{margin-left:auto;font-size:9px;font-weight:600;background:linear-gradient(135deg,var(--teal),var(--teal-dark));color:white;padding:2px 6px;border-radius:4px;}
+.sb-item .sb-count{margin-left:auto;font-size:10px;background:rgba(255,255,255,0.05);padding:1px 7px;border-radius:8px;font-weight:500;}
+.sb-divider{height:1px;background:rgba(255,255,255,0.04);margin:8px 18px;}
+.prop-item{display:flex;align-items:center;gap:8px;padding:6px 18px;cursor:pointer;font-size:11.5px;font-weight:500;color:var(--text-muted);transition:all 0.15s;position:relative;}
+.prop-item:hover{background:rgba(212,168,67,0.05);color:var(--text-dim);}
+.prop-item.active{color:var(--teal-light);background:rgba(212,168,67,0.08);}
+.prop-item.active::before{content:'';position:absolute;left:0;top:2px;bottom:2px;width:2px;background:var(--teal-light);border-radius:0 2px 2px 0;}
+.prop-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.prop-count{margin-left:auto;font-size:10px;color:var(--text-muted);}
+
+/* ===== CONTENT ===== */
+.content{flex:1;overflow-y:auto;overflow-x:hidden;padding:24px 28px;scroll-behavior:smooth;}
+.page{display:none;animation:pageIn 0.35s ease-out;}
+.page.active{display:block;}
+@keyframes pageIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* ===== SHARED COMPONENTS ===== */
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+.page-header h1{font-size:22px;font-weight:700;letter-spacing:-0.3px;}
+.page-header h1 b{color:var(--teal-light);font-weight:700;}
+.header-actions{display:flex;gap:8px;align-items:center;}
+
+.btn{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+.btn-gold{background:linear-gradient(135deg,var(--teal),var(--teal-dark));color:white;}
+.btn-gold:hover{box-shadow:0 4px 16px rgba(212,168,67,0.3);transform:translateY(-1px);}
+.btn-dark{background:rgba(255,255,255,0.04);color:var(--text);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(8px);}
+.btn-dark:hover{border-color:rgba(232,200,107,0.25);background:rgba(212,168,67,0.06);}
+.btn-sm{padding:5px 10px;font-size:11px;border-radius:6px;}
+.btn-outline{background:transparent;border:1px solid rgba(232,200,107,0.25);color:var(--teal-light);padding:5px 10px;font-size:11px;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.btn-outline:hover{background:rgba(212,168,67,0.1);}
+
+/* Cards — Glassmorphism */
+.card{background:var(--glass);backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);border-radius:14px;border:1px solid var(--glass-border);overflow:hidden;transition:all 0.25s;}
+.card:hover{border-color:rgba(255,255,255,0.12);box-shadow:0 8px 32px rgba(0,0,0,0.15);}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);}
+.card-header h3{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.card-body{padding:18px;}
+.card-gold{border-color:rgba(232,200,107,0.15);}
+
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.stats-row.cols-5{grid-template-columns:repeat(5,1fr);}
+.stats-row.cols-3{grid-template-columns:repeat(3,1fr);}
+.stat{background:var(--glass);backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);border-radius:12px;padding:16px 18px;border:1px solid var(--glass-border);transition:all 0.2s;}
+.stat:hover{border-color:rgba(232,200,107,0.15);background:rgba(212,168,67,0.04);}
+.stat-label{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;}
+.stat-val{font-size:26px;font-weight:800;margin-bottom:3px;letter-spacing:-0.5px;}
+.stat-val b{color:var(--teal-light);}
+.stat-sub{font-size:11px;color:var(--text-muted);}
+.stat-sub .up{color:var(--green);}
+.stat-sub .down{color:var(--red);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+.full-w{grid-column:1/-1;}
+
+.tag{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:10px;font-weight:600;}
+.tag-green{background:var(--green-bg);color:var(--green);}
+.tag-red{background:var(--red-bg);color:var(--red);}
+.tag-blue{background:var(--blue-bg);color:var(--blue);}
+.tag-orange{background:var(--orange-bg);color:var(--orange);}
+.tag-purple{background:var(--purple-bg);color:var(--purple);}
+.tag-gold{background:rgba(232,200,107,0.1);color:var(--teal-light);}
+.tag-cyan{background:var(--cyan-bg);color:var(--cyan);}
+.tag-teal{background:rgba(212,168,67,0.12);color:var(--teal-light);}
+
+.ai-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:10px;font-weight:600;background:rgba(212,168,67,0.1);color:var(--teal-light);border:1px solid rgba(232,200,107,0.15);}
+.ai-icon-sm{width:18px;height:18px;background:linear-gradient(135deg,var(--teal),var(--teal-dark));border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;color:white;}
+
+/* Tables */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.tbl td{font-size:12px;padding:10px;border-bottom:1px solid rgba(255,255,255,0.03);}
+.tbl tr:hover td{background:rgba(212,168,67,0.03);}
+.tbl .name-cell{display:flex;align-items:center;gap:8px;font-weight:500;}
+
+.mini-bar{width:70px;height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;}
+.mini-bar-fill{height:100%;border-radius:3px;transition:width 0.8s ease-out;}
+
+/* Chart bars */
+.bars{display:flex;align-items:flex-end;gap:6px;height:140px;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.bar{width:100%;border-radius:4px 4px 0 0;transition:height 0.6s ease-out;position:relative;cursor:pointer;background:linear-gradient(0deg,rgba(212,168,67,0.6),rgba(232,200,107,0.8));}
+.bar:hover{filter:brightness(1.2);}
+.bar-tip{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:600;white-space:nowrap;opacity:0;transition:opacity 0.2s;}
+.bar:hover .bar-tip{opacity:1;}
+.bar-lbl{font-size:9px;color:var(--text-muted);text-align:center;}
+
+/* Donut */
+.donut-wrap{display:flex;align-items:center;gap:20px;}
+.donut{width:120px;height:120px;position:relative;flex-shrink:0;}
+.donut svg{width:100%;height:100%;transform:rotate(-90deg);}
+.donut circle{fill:none;stroke-width:10;}
+.donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+.donut-center .big{font-size:22px;font-weight:800;color:var(--teal-light);display:block;}
+.donut-center .sm{font-size:9px;color:var(--text-muted);}
+.legend{display:flex;flex-direction:column;gap:8px;}
+.legend-row{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);}
+.legend-dot{width:8px;height:8px;border-radius:3px;flex-shrink:0;}
+.legend-val{margin-left:auto;font-weight:600;color:var(--text);}
+
+/* Progress */
+.progress{height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;margin:6px 0;}
+.progress-fill{height:100%;border-radius:3px;transition:width 1s ease-out;}
+
+/* Tabs */
+.tabs{display:flex;gap:3px;background:rgba(255,255,255,0.04);padding:3px;border-radius:8px;border:1px solid rgba(255,255,255,0.05);}
+.tab{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:500;color:var(--text-muted);cursor:pointer;transition:all 0.15s;}
+.tab.active{background:rgba(212,168,67,0.15);color:var(--teal-light);}
+
+/* Filter chips */
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.fchip{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);color:var(--text-muted);transition:all 0.15s;font-family:'DM Sans',sans-serif;backdrop-filter:blur(8px);}
+.fchip:hover{border-color:rgba(232,200,107,0.2);color:var(--text);}
+.fchip.active{background:rgba(212,168,67,0.12);border-color:rgba(232,200,107,0.3);color:var(--teal-light);}
+
+/* Kanban */
+.kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.kanban-col{background:rgba(255,255,255,0.02);border-radius:12px;padding:12px;min-height:200px;border:1px solid rgba(255,255,255,0.03);}
+.kanban-col-header{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
+.kanban-col-header .count{font-size:10px;background:rgba(255,255,255,0.05);padding:1px 6px;border-radius:8px;font-weight:500;color:var(--text-muted);}
+.kanban-card{background:var(--glass);backdrop-filter:blur(12px);border-radius:10px;padding:10px 12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.05);cursor:grab;transition:all 0.2s;font-size:12px;}
+.kanban-card:hover{border-color:rgba(232,200,107,0.2);transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,0.2);}
+.kanban-card .kc-title{font-weight:600;margin-bottom:4px;}
+.kanban-card .kc-meta{font-size:10px;color:var(--text-muted);display:flex;align-items:center;gap:6px;}
+.kanban-card .kc-prop{font-size:10px;color:var(--teal-light);}
+
+/* Timeline */
+.timeline{position:relative;padding-left:20px;}
+.timeline::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:1px;background:rgba(232,200,107,0.15);}
+.tl-item{position:relative;margin-bottom:14px;padding-left:16px;}
+.tl-item::before{content:'';position:absolute;left:-17px;top:4px;width:8px;height:8px;border-radius:50%;background:var(--teal-light);border:2px solid var(--dark2);}
+.tl-item.tl-pending::before{background:var(--text-muted);}
+.tl-item .tl-time{font-size:10px;color:var(--text-muted);margin-bottom:2px;}
+.tl-item .tl-text{font-size:12px;line-height:1.5;}
+
+/* Calendar */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:rgba(255,255,255,0.03);border-radius:12px;overflow:hidden;margin-bottom:20px;}
+.cal-hdr{background:rgba(15,23,42,0.6);backdrop-filter:blur(12px);padding:10px 6px;text-align:center;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);}
+.cal-day{background:rgba(15,23,42,0.35);backdrop-filter:blur(8px);min-height:90px;padding:6px;position:relative;cursor:pointer;transition:all 0.15s;}
+.cal-day:hover{background:rgba(212,168,67,0.04);}
+.cal-day.other{opacity:0.2;}
+.cal-day.today{background:rgba(212,168,67,0.06);}
+.cal-day.today .dn{background:var(--teal);color:white;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.dn{font-size:11px;font-weight:500;color:var(--text-muted);margin-bottom:4px;}
+.chip{padding:2px 6px;border-radius:4px;font-size:9px;font-weight:500;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:all 0.15s;}
+.chip:hover{transform:scale(1.03);}
+.cal-day.clash{background:rgba(239,68,68,0.04);}
+.clash-dot{position:absolute;top:4px;right:4px;width:12px;height:12px;background:var(--red);border-radius:50%;font-size:8px;font-weight:700;color:white;display:flex;align-items:center;justify-content:center;animation:clash-p 2s infinite;}
+@keyframes clash-p{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.4);}50%{box-shadow:0 0 0 4px rgba(239,68,68,0);}}
+
+/* Asset cards */
+.asset-card{background:var(--glass);backdrop-filter:blur(16px) saturate(1.3);border-radius:12px;overflow:hidden;border:1px solid var(--glass-border);transition:all 0.25s;cursor:pointer;}
+.asset-card:hover{border-color:rgba(232,200,107,0.2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,0.25);}
+.asset-img{height:110px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.asset-img .shimmer{position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent);animation:shimmer 3s infinite;}
+@keyframes shimmer{0%{left:-100%;}100%{left:200%;}}
+.asset-img .txt{font-size:15px;font-weight:700;color:white;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,0.5);z-index:1;}
+.asset-img .txt small{display:block;font-size:9px;font-weight:400;opacity:0.7;letter-spacing:1.5px;text-transform:uppercase;margin-top:4px;}
+.asset-info{padding:10px 12px;}
+.asset-info .at{font-size:9px;color:var(--teal-light);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;font-weight:600;}
+.asset-info .an{font-size:12px;font-weight:600;margin-bottom:3px;}
+.asset-info .am{font-size:10px;color:var(--text-muted);}
+.grad-1{background:linear-gradient(135deg,#0a1628,#1a3a5c,var(--teal));}
+.grad-2{background:linear-gradient(135deg,#0C1220,var(--navy),var(--teal-light));}
+.grad-3{background:linear-gradient(135deg,#1a0a0a,#6e1a1a,var(--gold));}
+.grad-4{background:linear-gradient(135deg,#0a2818,#1a6e3d,var(--teal));}
+.grad-5{background:linear-gradient(135deg,#1a1508,var(--gold-dark),var(--gold-light));}
+.grad-6{background:linear-gradient(135deg,#0a0a28,#2a1a6e,var(--teal-light));}
+
+/* Heatmap */
+.hm-cell{height:22px;border-radius:3px;cursor:pointer;position:relative;transition:transform 0.15s;}
+.hm-cell:hover{transform:scale(1.15);z-index:2;}
+.hm-cell .tip{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:rgba(15,23,42,0.9);backdrop-filter:blur(12px);border:1px solid rgba(232,200,107,0.2);padding:4px 8px;border-radius:6px;font-size:9px;white-space:nowrap;z-index:10;}
+.hm-cell:hover .tip{display:block;}
+.h0{background:rgba(255,255,255,0.02);}.h1{background:rgba(212,168,67,0.12);}.h2{background:rgba(212,168,67,0.25);}.h3{background:rgba(232,200,107,0.4);}.h4{background:rgba(232,200,107,0.65);}
+.hm-label{font-size:9px;color:var(--text-muted);display:flex;align-items:center;}
+
+/* Persona cards */
+.persona{background:var(--glass);backdrop-filter:blur(16px);border-radius:12px;padding:16px;border:1px solid var(--glass-border);cursor:pointer;transition:all 0.25s;}
+.persona:hover{border-color:rgba(232,200,107,0.2);box-shadow:0 6px 24px rgba(0,0,0,0.15);}
+.persona-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.persona-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
+.persona-name{font-size:13px;font-weight:600;}
+.persona-desc{font-size:11px;color:var(--text-muted);}
+.persona-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px;}
+.ps{text-align:center;}
+.ps .pv{font-size:18px;font-weight:800;color:var(--teal-light);}
+.ps .pl{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;}
+
+/* Journey */
+.journey{display:flex;align-items:center;gap:0;overflow-x:auto;padding:16px 0;}
+.j-step{flex-shrink:0;text-align:center;position:relative;}
+.j-circle{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;margin:0 auto 8px;border:2px solid rgba(255,255,255,0.08);background:var(--glass);backdrop-filter:blur(12px);transition:all 0.3s;}
+.j-step.active .j-circle{border-color:var(--teal-light);background:rgba(212,168,67,0.15);box-shadow:0 0 16px rgba(232,200,107,0.15);}
+.j-step.done .j-circle{border-color:var(--green);background:var(--green-bg);}
+.j-label{font-size:10px;color:var(--text-muted);max-width:80px;margin:0 auto;}
+.j-step.active .j-label{color:var(--teal-light);}
+.j-arrow{width:40px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.1);font-size:14px;flex-shrink:0;margin-top:-20px;}
+
+/* Sentiment */
+.sentiment-bar{display:flex;height:10px;border-radius:5px;overflow:hidden;gap:2px;}
+.sent-pos{background:var(--green);}.sent-neu{background:var(--text-muted);}.sent-neg{background:var(--red);}
+
+/* Video cards */
+.vid-card{background:var(--glass);backdrop-filter:blur(16px);border-radius:12px;overflow:hidden;border:1px solid var(--glass-border);transition:all 0.25s;}
+.vid-card:hover{border-color:rgba(232,200,107,0.2);}
+.vid-preview{height:120px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.vid-play{width:40px;height:40px;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);border:2px solid rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;z-index:1;cursor:pointer;transition:all 0.2s;}
+.vid-play:hover{background:rgba(212,168,67,0.4);border-color:var(--teal-light);}
+.vid-info{padding:10px;}
+.vid-info .vt{font-size:12px;font-weight:600;margin-bottom:3px;}
+.vid-info .vm{font-size:10px;color:var(--text-muted);}
+.vid-dur{position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);padding:2px 6px;border-radius:4px;font-size:9px;font-weight:500;}
+
+/* Brand compliance */
+.compliance-ring{width:100px;height:100px;position:relative;}
+.compliance-ring svg{width:100%;height:100%;transform:rotate(-90deg);}
+.compliance-ring circle{fill:none;stroke-width:8;}
+.compliance-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px;font-weight:800;color:var(--green);}
+.brand-issue{display:flex;align-items:flex-start;gap:10px;padding:10px;background:rgba(255,255,255,0.02);border-radius:10px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.03);transition:all 0.2s;}
+.brand-issue:hover{border-color:rgba(255,255,255,0.08);background:rgba(212,168,67,0.03);}
+.bi-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;}
+.bi-text h5{font-size:12px;font-weight:600;margin-bottom:2px;}
+.bi-text p{font-size:10px;color:var(--text-muted);line-height:1.4;}
+
+/* Property banner */
+.prop-banner{background:var(--glass);backdrop-filter:blur(20px) saturate(1.4);border-radius:14px;padding:18px 22px;margin-bottom:22px;border:1px solid var(--glass-border);display:flex;align-items:center;gap:16px;}
+.prop-banner-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white;}
+.prop-banner-info h2{font-size:18px;font-weight:700;}
+.prop-banner-info p{font-size:12px;color:var(--text-muted);}
+.prop-banner-stats{margin-left:auto;display:flex;gap:28px;}
+.pbs{text-align:center;}
+.pbs .v{font-size:20px;font-weight:800;color:var(--teal-light);}
+.pbs .l{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;}
+
+/* Modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
+.modal-bg.show{display:flex;}
+.modal{background:rgba(15,23,42,0.85);backdrop-filter:blur(30px) saturate(1.6);border-radius:18px;border:1px solid rgba(255,255,255,0.1);padding:28px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto;}
+.modal h2{font-size:18px;font-weight:700;margin-bottom:18px;}
+.mf{margin-bottom:14px;}
+.mf label{display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);margin-bottom:5px;}
+.mf input,.mf select,.mf textarea{width:100%;padding:9px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:all 0.2s;}
+.mf input:focus,.mf select:focus,.mf textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(212,168,67,0.12);}
+.mf textarea{resize:vertical;min-height:70px;}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;background:rgba(15,23,42,0.85);backdrop-filter:blur(20px) saturate(1.5);border:1px solid rgba(232,200,107,0.2);border-radius:12px;padding:12px 18px;display:flex;align-items:center;gap:10px;font-size:12px;z-index:300;transform:translateY(80px);opacity:0;transition:all 0.35s ease-out;max-width:400px;box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast-icon{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;background:linear-gradient(135deg,var(--teal),var(--teal-dark));color:white;}
+
+/* Line chart */
+.line-chart{height:140px;position:relative;}
+.line-chart svg{width:100%;height:100%;}
+.line-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--text-muted);margin-top:4px;}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.12);}
+
+/* Anim helpers */
+@keyframes barGrow{from{height:0;}}
+@keyframes countUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.anim-in{animation:countUp 0.4s ease-out backwards;}
+
+/* Glowing accents */
+.glow-teal{box-shadow:0 0 20px rgba(232,200,107,0.1);}
+.glow-subtle{box-shadow:0 4px 20px rgba(0,0,0,0.2);}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <img src="https://www.suninternational.com/content/dam/suninternational/SUN_logo_mobile.svg" alt="Sun International" class="si-logo" onerror="this.onerror=null;this.style.display='none';document.getElementById('logo-fallback').style.display='flex';">
+    <div id="logo-fallback" style="display:none;width:32px;height:32px;background:linear-gradient(135deg,var(--teal),var(--teal-dark));border-radius:7px;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:white;">SI</div>
+    <div class="logo-text">Control <b>Center</b></div>
+  </div>
+  <div class="topbar-center">
+    <div class="search-wrap">
+      <span class="search-icon">&#128269;</span>
+      <input class="global-search" placeholder="Search campaigns, properties, assets..." onclick="toast('Search — type to find anything')">
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="ai-live"><div class="ai-live-dot"></div>AI Active</div>
+    <div class="top-btn" onclick="toast('3 new notifications')">&#128276;<div class="badge">3</div></div>
+    <div class="top-btn" onclick="toast('Settings')">&#9881;</div>
+    <div class="avatar" onclick="toast('Nick Mouton — Admin')">NM</div>
+  </div>
+</div>
+
+<div class="app">
+  <div class="sidebar" id="sidebar"></div>
+  <div class="content" id="content"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal" id="modal-content"></div></div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><div class="toast-icon" id="toast-icon">&#10003;</div><span id="toast-text"></span></div>
+
+<script>
+// ===== DATA =====
+const P=[
+  {id:'all',name:'All Properties',color:'var(--teal-light)',n:42,type:'group',loc:'South Africa',rev:'R2.4B',eng:'5.8%',conv:'3.2%',roi:'3.4x'},
+  {id:'grandwest',name:'GrandWest',color:'var(--purple)',n:8,type:'Casino',loc:'Cape Town',rev:'R420M',eng:'6.2%',conv:'3.8%',roi:'4.1x'},
+  {id:'suncity',name:'Sun City Resort',color:'var(--blue)',n:6,type:'Resort',loc:'North West',rev:'R380M',eng:'7.1%',conv:'4.2%',roi:'3.9x'},
+  {id:'timesquare',name:'Time Square',color:'var(--green)',n:5,type:'Casino',loc:'Pretoria',rev:'R310M',eng:'5.4%',conv:'2.9%',roi:'3.2x'},
+  {id:'sibaya',name:'Sibaya',color:'var(--orange)',n:4,type:'Casino',loc:'Durban',rev:'R280M',eng:'5.9%',conv:'3.1%',roi:'3.5x'},
+  {id:'sunbet',name:'Sunbet',color:'var(--red)',n:7,type:'Online',loc:'Digital',rev:'R195M',eng:'8.3%',conv:'5.6%',roi:'4.8x'},
+  {id:'wildcoast',name:'Wild Coast Sun',color:'var(--cyan)',n:3,type:'Resort',loc:'Eastern Cape',rev:'R145M',eng:'6.5%',conv:'3.4%',roi:'3.0x'},
+  {id:'boardwalk',name:'Boardwalk',color:'#D4915E',n:3,type:'Casino',loc:'Gqeberha',rev:'R130M',eng:'4.8%',conv:'2.5%',roi:'2.8x'},
+  {id:'carnival',name:'Carnival City',color:'var(--silver)',n:3,type:'Casino',loc:'Johannesburg',rev:'R160M',eng:'5.1%',conv:'2.7%',roi:'3.1x'},
+  {id:'maslow',name:'The Maslow Hotel',color:'var(--pink)',n:2,type:'Hotel',loc:'Sandton',rev:'R95M',eng:'4.2%',conv:'3.9%',roi:'3.6x'},
+  {id:'flamingo',name:'Flamingo Casino',color:'#E056A0',n:2,type:'Casino',loc:'Kimberley',rev:'R75M',eng:'4.0%',conv:'2.2%',roi:'2.5x'},
+  {id:'meropa',name:'Meropa',color:'#45B7A0',n:2,type:'Casino',loc:'Polokwane',rev:'R68M',eng:'3.8%',conv:'2.0%',roi:'2.3x'},
+  {id:'windmill',name:'Windmill Casino',color:'#7E8CE0',n:1,type:'Casino',loc:'Bloemfontein',rev:'R52M',eng:'3.5%',conv:'1.8%',roi:'2.1x'},
+  {id:'goldenvalley',name:'Golden Valley',color:'#D4A847',n:1,type:'Casino',loc:'Worcester',rev:'R48M',eng:'3.2%',conv:'1.6%',roi:'2.0x'},
+  {id:'vacclub',name:'Vacation Club',color:'var(--platinum)',n:1,type:'Club',loc:'Multiple',rev:'R35M',eng:'5.0%',conv:'4.1%',roi:'3.3x'},
+];
+const PM={
+  all:{assets:186,imp:'12.4M',spend:'R4.2M',impGr:14,brandScore:94,brandIssues:0},
+  grandwest:{assets:26,imp:'680K',spend:'R320K',impGr:16,brandScore:96,brandIssues:0},
+  suncity:{assets:22,imp:'540K',spend:'R280K',impGr:12,brandScore:97,brandIssues:0},
+  timesquare:{assets:18,imp:'420K',spend:'R240K',impGr:11,brandScore:94,brandIssues:1},
+  sibaya:{assets:16,imp:'380K',spend:'R200K',impGr:15,brandScore:95,brandIssues:0},
+  sunbet:{assets:28,imp:'820K',spend:'R380K',impGr:18,brandScore:92,brandIssues:1},
+  wildcoast:{assets:12,imp:'260K',spend:'R160K',impGr:9,brandScore:93,brandIssues:1},
+  boardwalk:{assets:11,imp:'220K',spend:'R140K',impGr:10,brandScore:91,brandIssues:1},
+  carnival:{assets:14,imp:'280K',spend:'R180K',impGr:13,brandScore:94,brandIssues:0},
+  maslow:{assets:8,imp:'160K',spend:'R120K',impGr:8,brandScore:96,brandIssues:0},
+  flamingo:{assets:7,imp:'120K',spend:'R90K',impGr:10,brandScore:89,brandIssues:2},
+  meropa:{assets:6,imp:'100K',spend:'R80K',impGr:9,brandScore:90,brandIssues:1},
+  windmill:{assets:5,imp:'80K',spend:'R60K',impGr:11,brandScore:88,brandIssues:1},
+  goldenvalley:{assets:4,imp:'65K',spend:'R50K',impGr:8,brandScore:91,brandIssues:0},
+  vacclub:{assets:9,imp:'90K',spend:'R70K',impGr:12,brandScore:95,brandIssues:0},
+};
+const HEAT=[3,2,4,3,2,1, 2,1,3,4,3,2, 3,3,4,3,2,1, 2,2,3,4,3,2, 4,3,4,4,3,2, 1,2,3,4,4,3, 2,1,2,3,3,2];
+const PAGES=[
+  {id:'dashboard',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',label:'Dashboard',section:'Overview'},
+  {id:'generator',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',label:'Campaign Generator',section:'Create',badge:'AI'},
+  {id:'scaler',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><rect x="14" y="14" width="8" height="8" rx="1"/></svg>',label:'Content Scaler',section:'Create'},
+  {id:'vidpipeline',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>',label:'Video Pipeline',section:'Create'},
+  {id:'calendar',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',label:'Promo Calendar',section:'Manage'},
+  {id:'approvals',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>',label:'Approvals',section:'Manage'},
+  {id:'brand',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',label:'Brand Centre',section:'Manage'},
+  {id:'personalise',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',label:'Personalisation',section:'Engage',badge:'AI'},
+  {id:'loyalty',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>',label:'Loyalty Builder',section:'Engage'},
+  {id:'analytics',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>',label:'Analytics',section:'Measure'},
+  {id:'intelligence',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',label:'Intelligence',section:'Measure'},
+];
+const CAL=[
+  {d:1,l:'Payday Weekend',c:'tag-teal',p:'all'},{d:2,l:'Slots Frenzy',c:'tag-green',p:'grandwest'},
+  {d:4,l:'Midweek Escape',c:'tag-blue',p:'suncity'},{d:5,l:'VIP Loyalty Boost',c:'tag-purple',p:'all'},
+  {d:7,l:'Sunbet Super Sat',c:'tag-red',p:'sunbet',clash:1},{d:7,l:'Sibaya Jackpot',c:'tag-orange',p:'sibaya',clash:1},
+  {d:8,l:"Val's Week",c:'tag-teal',p:'all'},{d:9,l:'Monday Madness',c:'tag-green',p:'grandwest'},
+  {d:11,l:'Midweek Deal',c:'tag-blue',p:'suncity'},{d:12,l:'Wine Evening',c:'tag-purple',p:'maslow'},
+  {d:13,l:"Val's Promo",c:'tag-teal',p:'all'},{d:14,l:"Valentine's Day",c:'tag-teal',p:'all'},
+  {d:14,l:'Love Bet',c:'tag-red',p:'sunbet'},{d:15,l:'R500K Draw',c:'tag-green',p:'grandwest'},
+  {d:17,l:'Tues Slots',c:'tag-orange',p:'sibaya'},{d:19,l:'Golf Classic',c:'tag-blue',p:'suncity'},
+  {d:19,l:'Coastal Pkg',c:'tag-cyan',p:'wildcoast'},{d:20,l:'Fri Frenzy',c:'tag-red',p:'sunbet',clash:1},
+  {d:20,l:'Payday Bash',c:'tag-green',p:'grandwest',clash:1},{d:20,l:'Carnival Spin',c:'tag-orange',p:'carnival',clash:1},
+  {d:21,l:'Group Jackpot',c:'tag-teal',p:'all'},{d:22,l:'Live Music',c:'tag-blue',p:'timesquare'},
+  {d:24,l:'Vacation Spl',c:'tag-purple',p:'vacclub'},{d:25,l:'Payday',c:'tag-teal',p:'all'},
+  {d:27,l:'Weekend Rush',c:'tag-green',p:'grandwest'},{d:28,l:'Month End',c:'tag-red',p:'sunbet'},
+  {d:28,l:'Boardwalk Fest',c:'tag-orange',p:'boardwalk'},
+];
+
+// STATE
+let curPage='dashboard',curProp='all',curMonth=1,curYear=2026;
+const MO=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function cp(){return P.find(p=>p.id===curProp);}
+
+
+// INIT
+function init(){renderSidebar();renderPage();}
+
+// SIDEBAR
+function renderSidebar(){
+  let h='',ls='';
+  PAGES.forEach(pg=>{
+    if(pg.section!==ls){if(ls)h+='<div class="sb-divider"></div>';h+=`<div class="sb-section"><div class="sb-label">${pg.section}</div>`;ls=pg.section;}
+    h+=`<div class="sb-item${curPage===pg.id?' active':''}" onclick="nav('${pg.id}')">${pg.icon} ${pg.label}${pg.badge?'<span class="sb-badge">'+pg.badge+'</span>':''}</div>`;
+  });
+  h+='</div><div class="sb-divider"></div><div class="sb-section"><div class="sb-label">Properties</div>';
+  P.forEach(p=>{h+=`<div class="prop-item${curProp===p.id?' active':''}" onclick="setProp('${p.id}')"><div class="prop-dot" style="background:${p.color}"></div>${p.name}<span class="prop-count">${p.n}</span></div>`;});
+  h+='</div>';document.getElementById('sidebar').innerHTML=h;
+}
+function nav(p){curPage=p;renderSidebar();renderPage();document.getElementById('content').scrollTop=0;}
+function setProp(id){curProp=id;renderSidebar();renderPage();}
+
+// BANNER
+function ban(){
+  if(curProp==='all')return '';const p=cp();
+  return `<div class="prop-banner glow-subtle"><div class="prop-banner-icon" style="background:${p.color}">${p.name.substring(0,2)}</div><div class="prop-banner-info"><h2>${p.name}</h2><p>${p.type} &middot; ${p.loc}</p></div><div class="prop-banner-stats"><div class="pbs"><div class="v">${p.n}</div><div class="l">Promos</div></div><div class="pbs"><div class="v">${p.rev}</div><div class="l">Revenue</div></div><div class="pbs"><div class="v">${p.roi}</div><div class="l">ROI</div></div><div class="pbs"><div class="v">${p.eng}</div><div class="l">Engagement</div></div></div></div>`;
+}
+
+// RENDER
+function renderPage(){
+  const fn={dashboard:pgDash,generator:pgGen,scaler:pgScale,vidpipeline:pgVid,calendar:pgCal,approvals:pgAppr,brand:pgBrand,personalise:pgPers,loyalty:pgLoy,analytics:pgAna,intelligence:pgIntel};
+  document.getElementById('content').innerHTML='<div class="page active">'+(fn[curPage]?fn[curPage]():'')+  '</div>';
+}
+
+// HELPERS
+function barChart(l,v,c){const mx=Math.max(...v);return l.map((x,i)=>{const h=(v[i]/mx)*100;return `<div class="bar-col"><div class="bar" style="height:${h}%;${c?'background:'+c+';':''}animation:barGrow 0.6s ease-out ${i*0.08}s backwards;"><div class="bar-tip">${v[i]}K</div></div><div class="bar-lbl">${x}</div></div>`;}).join('');}
+function donut(data){const C=2*Math.PI*46;let off=0;const arcs=data.map(d=>{const l=(d.v/100)*C;const o=off;off+=l+3;return `<circle cx="60" cy="60" r="46" stroke="${d.c}" stroke-dasharray="${l-2} ${C-(l-2)}" stroke-dashoffset="${-o}" stroke-linecap="round"/>`;});return `<div class="donut-wrap"><div class="donut"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="46" stroke="rgba(255,255,255,0.03)"/>${arcs.join('')}</svg><div class="donut-center"><span class="big">${data[0].v}%</span><span class="sm">${data[0].n}</span></div></div><div class="legend">${data.map(d=>`<div class="legend-row"><div class="legend-dot" style="background:${d.c}"></div>${d.n}<span class="legend-val">${d.v}%</span></div>`).join('')}</div></div>`;}
+function heatHTML(){const d=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],hrs=['6am','9am','12pm','3pm','6pm','9pm'];let h='<div style="display:grid;grid-template-columns:32px repeat(6,1fr);gap:2px;">';h+='<div class="hm-label"></div>'+hrs.map(x=>`<div class="hm-label" style="justify-content:center;">${x}</div>`).join('');d.forEach((day,di)=>{h+=`<div class="hm-label">${day}</div>`;for(let i=0;i<6;i++){const v=HEAT[di*6+i];h+=`<div class="hm-cell h${v}"><div class="tip">${day} ${hrs[i]}: ${[0,120,340,680,1200][v]}</div></div>`;}});h+='</div>';return h;}
+function aiRows(){return [{t:'Clash',c:'tag-red',ti:'Scheduling conflict — Feb 7',d:'Sunbet & Sibaya overlap'},{t:'Opportunity',c:'tag-green',ti:'Valentine\'s gap — Wild Coast',d:'38% uplift potential'},{t:'Optimize',c:'tag-blue',ti:'Payday consolidation',d:'+22% cross-property engagement'},{t:'Opportunity',c:'tag-green',ti:'Email under-utilised',d:'4.2x ROI at 12% spend'}].map(i=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);cursor:pointer;" onclick="nav('intelligence')"><span class="tag ${i.c}">${i.t}</span><div><div style="font-size:12px;font-weight:600;">${i.ti}</div><div style="font-size:10px;color:var(--text-muted);">${i.d}</div></div><button class="btn-outline" style="margin-left:auto;">View</button></div>`).join('');}
+function propLB(){return `<table class="tbl"><thead><tr><th>Property</th><th>Engagement</th><th>ROI</th></tr></thead><tbody>${P.slice(1,8).sort((a,b)=>parseFloat(b.roi)-parseFloat(a.roi)).map(p=>`<tr style="cursor:pointer;" onclick="setProp('${p.id}')"><td><div class="name-cell"><div class="prop-dot" style="background:${p.color}"></div>${p.name}</div></td><td>${p.eng}</td><td style="color:var(--teal-light);font-weight:600;">${p.roi}</td></tr>`).join('')}</tbody></table>`;}
+
+// ===== PAGES =====
+function pgDash(){const p=cp();return `${ban()}
+<div class="page-header"><h1>Command <b>Dashboard</b></h1><div class="header-actions"><div class="ai-live"><div class="ai-live-dot"></div>All systems operational</div></div></div>
+<div class="stats-row cols-5"><div class="stat"><div class="stat-label">Active Campaigns</div><div class="stat-val"><b>${p.n}</b></div><div class="stat-sub"><span class="up">+12%</span> vs last month</div></div><div class="stat"><div class="stat-label">Properties Live</div><div class="stat-val">${curProp==='all'?'<b>14</b>/14':'<b>1</b>/1'}</div><div class="stat-sub">All active</div></div><div class="stat"><div class="stat-label">AI Assets</div><div class="stat-val"><b>${PM[curProp].assets}</b></div><div class="stat-sub"><span class="up">+34%</span> speed</div></div><div class="stat"><div class="stat-label">Engagement</div><div class="stat-val"><b>${p.eng}</b></div><div class="stat-sub"><span class="up">+0.8%</span></div></div><div class="stat"><div class="stat-label">ROI</div><div class="stat-val"><b>${p.roi}</b></div></div></div>
+<div class="grid-2"><div class="card card-gold"><div class="card-header"><h3><span class="ai-icon-sm">&#9672;</span> AI Insights</h3><span class="tag tag-teal">6 Active</span></div><div class="card-body">${aiRows()}</div></div><div class="card"><div class="card-header"><h3>Quick Actions</h3></div><div class="card-body"><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"><button class="btn btn-gold" style="justify-content:center;" onclick="nav('generator')">&#9672; New Campaign</button><button class="btn btn-dark" style="justify-content:center;" onclick="nav('calendar')">&#128197; Calendar</button><button class="btn btn-dark" style="justify-content:center;" onclick="nav('analytics')">&#128200; Analytics</button><button class="btn btn-dark" style="justify-content:center;" onclick="nav('approvals')">&#9989; Approvals</button><button class="btn btn-dark" style="justify-content:center;" onclick="nav('brand')">&#128737; Brand</button><button class="btn btn-dark" style="justify-content:center;" onclick="nav('scaler')">&#128260; Scale</button></div></div></div></div>
+<div class="grid-2"><div class="card"><div class="card-header"><h3>Performance — 7 Days</h3><div class="tabs"><div class="tab active" onclick="toggleTab(this)">Engagement</div><div class="tab" onclick="toggleTab(this)">Conversions</div></div></div><div class="card-body"><div class="bars" style="height:120px;">${barChart(['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],[45,38,52,48,67,82,71])}</div></div></div><div class="card"><div class="card-header"><h3>Property Leaderboard</h3></div><div class="card-body">${propLB()}</div></div></div>
+<div class="card" style="margin-bottom:20px;"><div class="card-header"><h3>Recent Activity</h3></div><div class="card-body"><div class="timeline"><div class="tl-item"><div class="tl-time">2 min ago</div><div class="tl-text"><b>AI Engine</b> generated 3 Valentine's assets for Sun City</div></div><div class="tl-item"><div class="tl-time">18 min ago</div><div class="tl-text"><b>Brand Centre</b> flagged off-brand colour in Flamingo Casino email</div></div><div class="tl-item"><div class="tl-time">45 min ago</div><div class="tl-text"><b>Scheduling AI</b> detected overlap — Sunbet & Sibaya Feb 7</div></div><div class="tl-item"><div class="tl-time">1 hour ago</div><div class="tl-text"><b>Campaign</b> "GW R500K Draw" approved</div></div><div class="tl-item tl-pending"><div class="tl-time">2 hours ago</div><div class="tl-text"><b>Scaler</b> adapted Valentine's Escape across 8 properties</div></div></div></div></div>`;}
+
+function pgGen(){return `${ban()}<div class="page-header"><h1>AI Campaign <b>Generator</b></h1><div class="header-actions"><span class="ai-badge"><span class="ai-icon-sm">&#9672;</span> Powered by AI</span></div></div><div class="grid-2"><div class="card card-gold"><div class="card-header"><h3>Campaign Brief</h3></div><div class="card-body"><div class="mf"><label>Campaign Name</label><input placeholder="e.g. Winter Jackpot Weekend"></div><div class="mf"><label>Property</label><select>${P.map(p=>'<option>'+p.name+'</option>').join('')}</select></div><div class="mf"><label>Type</label><select><option>Gaming Promotion</option><option>Hotel & Resort</option><option>Loyalty & CX</option><option>Brand Awareness</option><option>Online / Sunbet</option><option>Event</option></select></div><div class="mf"><label>Audience</label><select><option>All Segments</option><option>High Rollers (VIP)</option><option>Casual Players</option><option>Hotel Guests</option><option>Online Players</option></select></div><div class="mf"><label>Channels</label><div class="filters"><button class="fchip active" onclick="toggleChip(this)">Social</button><button class="fchip active" onclick="toggleChip(this)">Email</button><button class="fchip" onclick="toggleChip(this)">Display</button><button class="fchip" onclick="toggleChip(this)">SMS</button><button class="fchip" onclick="toggleChip(this)">Web</button></div></div><div class="mf"><label>Brief</label><textarea placeholder="Describe the campaign..."></textarea></div><button class="btn btn-gold" style="width:100%;justify-content:center;padding:12px;" onclick="toast('AI generating campaign concepts...')">&#9672; Generate Campaign</button></div></div><div><div class="card card-gold" style="margin-bottom:16px;"><div class="card-header"><h3><span class="ai-icon-sm">&#9672;</span> AI Concepts</h3><span class="tag tag-teal">3 Variants</span></div><div class="card-body">${[{n:'Jackpot Nights',d:'Bold, high-energy casino promotion with animated graphics and urgency-driven copy.',s:94},{n:'Golden Escape',d:'Luxury resort positioning with warm tones, aspirational lifestyle imagery.',s:89},{n:'Win Big Weekend',d:'Mass-market appeal with bright visuals, clear prize callouts, social-first.',s:86}].map((c,i)=>`<div style="padding:12px;background:rgba(255,255,255,0.02);border-radius:10px;margin-bottom:10px;border:1px solid ${i===0?'rgba(232,200,107,0.2)':'rgba(255,255,255,0.04)'};cursor:pointer;transition:all 0.2s;" onclick="toast('${c.n} selected')"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-weight:600;">${c.n}</span><span class="tag tag-teal">Score: ${c.s}%</span></div><p style="font-size:11px;color:var(--text-muted);line-height:1.5;">${c.d}</p></div>`).join('')}</div></div><div class="card"><div class="card-header"><h3>AI Recommendations</h3></div><div class="card-body" style="font-size:12px;color:var(--text-muted);line-height:1.7;"><div style="margin-bottom:8px;">&#128197; <b style="color:var(--text);">Best Day:</b> Saturday — 42% higher engagement</div><div style="margin-bottom:8px;">&#128140; <b style="color:var(--text);">Tone:</b> Exciting & aspirational</div><div style="margin-bottom:8px;">&#127912; <b style="color:var(--text);">Format:</b> Video-first for social, static for email</div><div>&#128176; <b style="color:var(--text);">Budget:</b> R45K production, R120K media — 3.8x ROI</div></div></div></div></div>`;}
+
+function pgScale(){const pp=P.slice(1,9);return `${ban()}<div class="page-header"><h1>Content <b>Scaler</b></h1><div class="header-actions"><button class="btn btn-gold" onclick="toast('Scaling across all properties...')">&#128260; Scale to All</button></div></div><div class="card card-gold" style="margin-bottom:20px;"><div class="card-header"><h3><span class="ai-icon-sm">&#9672;</span> Source: Valentine's Escape</h3><span class="tag tag-green">Approved</span></div><div class="card-body"><div style="display:flex;gap:16px;"><div class="asset-img grad-2" style="width:200px;height:110px;border-radius:10px;flex-shrink:0;"><div class="shimmer"></div><div class="txt">Valentine's Escape<small>Sun City Resort</small></div></div><div><p style="font-size:12px;color:var(--text-muted);line-height:1.6;margin-bottom:8px;">AI adapts copy, imagery, offers, and branding for each property maintaining the "Golden Thread" identity.</p><div style="display:flex;gap:6px;"><span class="tag tag-blue">Social</span><span class="tag tag-green">Email</span><span class="tag tag-purple">Web</span><span class="tag tag-teal">Print</span></div></div></div></div></div><div class="grid-4">${pp.map((p,i)=>`<div class="asset-card" onclick="toast('Editing ${p.name} variant...')"><div class="asset-img grad-${(i%6)+1}" style="height:90px;"><div class="shimmer"></div><div class="txt" style="font-size:12px;">Valentine's<small>${p.name}</small></div><span class="tag tag-${['green','orange','blue','green','orange','green','blue','green'][i]}" style="position:absolute;top:6px;right:6px;font-size:8px;">${['Done','Review','Pending','Done','Review','Done','Pending','Done'][i]}</span></div><div class="asset-info"><div class="at">${p.name}</div><div class="an">AI Adapted</div><div class="progress"><div class="progress-fill" style="width:${[100,75,40,100,65,100,30,100][i]}%;background:${p.color};"></div></div></div></div>`).join('')}</div>`;}
+
+function pgVid(){const vids=[{t:'GW R500K — Reel',p:'GrandWest',dur:'0:15',s:'Rendering',g:'grad-1'},{t:'Sun City Valentine\'s',p:'Sun City',dur:'0:30',s:'Approved',g:'grad-2'},{t:'Sunbet Love Bet',p:'Sunbet',dur:'0:10',s:'Review',g:'grad-3'},{t:'Sibaya Jackpot',p:'Sibaya',dur:'0:15',s:'Draft',g:'grad-4'},{t:'Time Square Live',p:'Time Square',dur:'0:20',s:'Approved',g:'grad-5'},{t:'Payday Pre-roll',p:'All',dur:'0:06',s:'Rendering',g:'grad-6'}];return `${ban()}<div class="page-header"><h1>Video & Motion <b>Pipeline</b></h1><div class="header-actions"><button class="btn btn-gold" onclick="toast('AI generating video...')">&#9672; Generate Video</button></div></div><div class="stats-row"><div class="stat"><div class="stat-label">In Pipeline</div><div class="stat-val"><b>6</b></div></div><div class="stat"><div class="stat-label">Rendering</div><div class="stat-val" style="color:var(--orange);"><b>2</b></div></div><div class="stat"><div class="stat-label">Approved</div><div class="stat-val"><b>2</b></div></div><div class="stat"><div class="stat-label">Avg Time</div><div class="stat-val"><b>4.2</b>min</div><div class="stat-sub"><span class="up">-68%</span> vs manual</div></div></div><div class="grid-3">${vids.map(v=>`<div class="vid-card" onclick="toast('${v.t.replace(/'/g,"&#39;")}')"><div class="vid-preview ${v.g}"><div class="vid-play">&#9654;</div><div class="vid-dur">${v.dur}</div><div class="shimmer"></div></div><div class="vid-info"><div class="vt">${v.t}</div><div class="vm">${v.p} &middot; <span class="tag tag-${v.s==='Approved'?'green':v.s==='Review'?'orange':v.s==='Rendering'?'blue':'purple'}" style="font-size:9px;">${v.s}</span></div></div></div>`).join('')}</div><div class="card"><div class="card-header"><h3>AI Workflow</h3></div><div class="card-body"><div class="journey">${[{i:'&#128221;',l:'Brief',s:'done'},{i:'&#9672;',l:'AI Script',s:'done'},{i:'&#127912;',l:'Storyboard',s:'done'},{i:'&#127909;',l:'Render',s:'active'},{i:'&#128064;',l:'Review',s:''},{i:'&#9989;',l:'Approve',s:''},{i:'&#128640;',l:'Publish',s:''}].map((s,i,a)=>`<div class="j-step ${s.s}"><div class="j-circle">${s.i}</div><div class="j-label">${s.l}</div></div>${i<a.length-1?'<div class="j-arrow">&rarr;</div>':''}`).join('')}</div></div></div>`;}
+
+function pgCal(){const fd=new Date(curYear,curMonth,1).getDay();const dim=new Date(curYear,curMonth+1,0).getDate();const pd=new Date(curYear,curMonth,0).getDate();const off=fd===0?6:fd-1;const today=new Date();const isCur=today.getFullYear()===curYear&&today.getMonth()===curMonth;let promos=curProp==='all'?CAL:CAL.filter(x=>x.p===curProp||x.p==='all');let cal='<div class="cal-hdr">Mon</div><div class="cal-hdr">Tue</div><div class="cal-hdr">Wed</div><div class="cal-hdr">Thu</div><div class="cal-hdr">Fri</div><div class="cal-hdr">Sat</div><div class="cal-hdr">Sun</div>';for(let i=off-1;i>=0;i--)cal+=`<div class="cal-day other"><div class="dn">${pd-i}</div></div>`;for(let d=1;d<=dim;d++){const dp=promos.filter(x=>x.d===d);const t=isCur&&d===today.getDate();const cl=dp.some(x=>x.clash)&&dp.length>1;cal+=`<div class="cal-day${t?' today':''}${cl?' clash':''}"><div class="dn">${d}</div>${cl?'<div class="clash-dot">!</div>':''}${dp.map(x=>`<div class="chip ${x.c}">${x.l}</div>`).join('')}</div>`;}const tot=off+dim;const rem=tot%7===0?0:7-(tot%7);for(let i=1;i<=rem;i++)cal+=`<div class="cal-day other"><div class="dn">${i}</div></div>`;
+return `${ban()}<div class="page-header"><h1>Promotion <b>Calendar</b></h1><div class="header-actions"><button class="btn btn-dark" onclick="toast('Synced')">&#8635; Sync</button><button class="btn btn-gold" onclick="openModal('promo')">+ New Promo</button></div></div><div class="stats-row"><div class="stat"><div class="stat-label">Active Promos</div><div class="stat-val"><b>${promos.length}</b></div></div><div class="stat"><div class="stat-label">Properties</div><div class="stat-val"><b>${curProp==='all'?14:1}</b></div></div><div class="stat"><div class="stat-label">AI Assets</div><div class="stat-val"><b>${PM[curProp].assets}</b></div></div><div class="stat"><div class="stat-label">Clashes</div><div class="stat-val" style="color:var(--red);"><b>2</b></div></div></div><div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;"><button class="btn btn-dark btn-sm" onclick="curMonth--;if(curMonth<0){curMonth=11;curYear--;}renderPage();">&larr;</button><h2 style="font-size:16px;font-weight:700;min-width:160px;">${MO[curMonth]} ${curYear}</h2><button class="btn btn-dark btn-sm" onclick="curMonth++;if(curMonth>11){curMonth=0;curYear++;}renderPage();">&rarr;</button><div class="tabs" style="margin-left:auto;"><div class="tab active" onclick="toggleTab(this)">Month</div><div class="tab" onclick="toggleTab(this)">Week</div><div class="tab" onclick="toggleTab(this)">List</div></div></div><div class="cal-grid">${cal}</div><div class="card card-gold"><div class="card-header"><h3><span class="ai-icon-sm">&#9672;</span> AI Scheduling Intelligence</h3><span class="tag tag-teal">3 Insights</span></div><div class="card-body">${aiRows()}</div></div>`;}
+
+function pgAppr(){const cols=[{t:'Briefed',c:'var(--blue)',items:[{n:'Meropa March',p:'Meropa',d:'Mar 1'},{n:'Windmill Casino Heritage',p:'Windmill',d:'Mar 21'}]},{t:'Production',c:'var(--orange)',items:[{n:'GW Easter Jackpot',p:'GrandWest',d:'Apr 5'},{n:'Sunbet March',p:'Sunbet',d:'Mar 8'},{n:'Sibaya Seafood',p:'Sibaya',d:'Mar 15'}]},{t:'Review',c:'var(--purple)',items:[{n:'Sun City Golf',p:'Sun City',d:'Feb 19'},{n:'Wild Coast Pkg',p:'Wild Coast',d:'Feb 19'},{n:'TS Live Music',p:'Time Sq',d:'Feb 22'}]},{t:'Approved',c:'var(--green)',items:[{n:"Valentine's Group",p:'All',d:'Feb 14'},{n:'GW R500K Draw',p:'GrandWest',d:'Feb 15'},{n:'Payday Wknd',p:'All',d:'Feb 25'},{n:'Love Bet',p:'Sunbet',d:'Feb 14'}]}];return `${ban()}<div class="page-header"><h1>Campaign <b>Approvals</b></h1><div class="header-actions"><div class="tabs"><div class="tab active" onclick="toggleTab(this)">Board</div><div class="tab" onclick="toggleTab(this)">List</div><div class="tab" onclick="toggleTab(this)">Timeline</div></div></div></div><div class="stats-row"><div class="stat"><div class="stat-label">Briefed</div><div class="stat-val" style="color:var(--blue);"><b>2</b></div></div><div class="stat"><div class="stat-label">Production</div><div class="stat-val" style="color:var(--orange);"><b>3</b></div></div><div class="stat"><div class="stat-label">Review</div><div class="stat-val" style="color:var(--purple);"><b>3</b></div></div><div class="stat"><div class="stat-label">Approved</div><div class="stat-val" style="color:var(--green);"><b>4</b></div></div></div><div class="kanban">${cols.map(c=>`<div class="kanban-col"><div class="kanban-col-header" style="color:${c.c};">${c.t}<span class="count">${c.items.length}</span></div>${c.items.map(i=>`<div class="kanban-card" onclick="toast('${i.n.replace(/'/g,"&#39;")}')"><div class="kc-prop">${i.p}</div><div class="kc-title">${i.n}</div><div class="kc-meta"><span>&#128197; ${i.d}</span><span class="tag tag-teal" style="font-size:8px;">AI</span></div></div>`).join('')}</div>`).join('')}</div>`;}
+
+function pgBrand(){const issues=[{sev:'red',icon:'&#127912;',t:'Off-brand colour — Flamingo Casino email',d:'#FF6B8A instead of #E056A0. Auto-fix available.'},{sev:'orange',icon:'&#128221;',t:'Font mismatch — Carnival City banner',d:'Helvetica instead of DM Sans.'},{sev:'orange',icon:'&#128444;',t:'Low-res logo — Boardwalk Casino social',d:'Below 72dpi. AI upscale ready.'},{sev:'green',icon:'&#9989;',t:'GW R500K Draw — Passed',d:'All brand elements verified.'},{sev:'green',icon:'&#9989;',t:'Sun City Valentine\'s — Passed',d:'Golden Thread maintained.'}];return `${ban()}<div class="page-header"><h1>Brand <b>Command Centre</b></h1><div class="header-actions"><button class="btn btn-gold" onclick="toast('Running audit...')">&#128737; Run Audit</button></div></div><div class="stats-row"><div class="stat"><div class="stat-label">Brand Score</div><div class="stat-val" style="color:var(--green);"><b>94%</b></div><div class="stat-sub"><span class="up">+3%</span></div></div><div class="stat"><div class="stat-label">Scanned</div><div class="stat-val"><b>186</b></div></div><div class="stat"><div class="stat-label">Issues</div><div class="stat-val" style="color:var(--orange);"><b>3</b></div></div><div class="stat"><div class="stat-label">Auto-Fixed</div><div class="stat-val"><b>12</b></div></div></div><div class="grid-2"><div class="card card-gold"><div class="card-header"><h3>Compliance</h3></div><div class="card-body"><div style="display:flex;align-items:center;gap:20px;margin-bottom:12px;"><div class="compliance-ring"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" stroke="rgba(255,255,255,0.05)" stroke-width="8"/><circle cx="50" cy="50" r="42" stroke="var(--green)" stroke-width="8" stroke-dasharray="${0.94*264} ${264}" stroke-linecap="round"/></svg><div class="compliance-center">94%</div></div><div class="legend"><div class="legend-row"><div class="legend-dot" style="background:var(--green);"></div>Compliant (174)<span class="legend-val">94%</span></div><div class="legend-row"><div class="legend-dot" style="background:var(--orange);"></div>Warnings (9)<span class="legend-val">5%</span></div><div class="legend-row"><div class="legend-dot" style="background:var(--red);"></div>Violations (3)<span class="legend-val">1%</span></div></div></div></div></div><div class="card"><div class="card-header"><h3>Brand Issues</h3><span class="tag tag-orange">3 Open</span></div><div class="card-body">${issues.map(i=>`<div class="brand-issue"><div class="bi-icon" style="background:var(--${i.sev}-bg);color:var(--${i.sev});">${i.icon}</div><div class="bi-text"><h5>${i.t}</h5><p>${i.d}</p></div></div>`).join('')}</div></div></div><div class="card"><div class="card-header"><h3>Property Scores</h3></div><div class="card-body"><table class="tbl"><thead><tr><th>Property</th><th>Score</th><th>Compliance</th><th>Issues</th></tr></thead><tbody>${P.slice(1,10).map(p=>{const s=PM[p.id].brandScore;return `<tr><td><div class="name-cell"><div class="prop-dot" style="background:${p.color}"></div>${p.name}</div></td><td style="font-weight:600;color:${s>93?'var(--green)':'var(--orange)'};">${s}%</td><td><div class="mini-bar" style="width:80px;"><div class="mini-bar-fill" style="width:${s}%;background:${s>93?'var(--green)':'var(--orange)'}"></div></div></td><td>${PM[p.id].brandIssues}</td></tr>`;}).join('')}</tbody></table></div></div>`;}
+
+function pgPers(){const personas=[{n:'High Rollers',desc:'VIP, R10K+ monthly',color:'var(--teal)',av:'HR',size:'12K',ltv:'R48K',eng:'9.2%'},{n:'Casual Players',desc:'Weekly slots & tables',color:'var(--green)',av:'CP',size:'85K',ltv:'R8.5K',eng:'5.4%'},{n:'Resort Guests',desc:'Holiday bookers',color:'var(--blue)',av:'RG',size:'34K',ltv:'R12K',eng:'6.8%'},{n:'Online Players',desc:'Sunbet digital-first',color:'var(--red)',av:'OP',size:'120K',ltv:'R3.2K',eng:'8.1%'},{n:'Loyalty Members',desc:'MVG & Sun Rewards',color:'var(--purple)',av:'LM',size:'45K',ltv:'R22K',eng:'7.6%'},{n:'New Prospects',desc:'First-time visitors',color:'var(--cyan)',av:'NP',size:'28K',ltv:'R1.8K',eng:'3.2%'}];return `${ban()}<div class="page-header"><h1>AI <b>Personalisation</b></h1><div class="header-actions"><span class="ai-badge"><span class="ai-icon-sm">&#9672;</span> 6 Segments</span></div></div><div class="stats-row"><div class="stat"><div class="stat-label">Audience</div><div class="stat-val"><b>324K</b></div></div><div class="stat"><div class="stat-label">Segments</div><div class="stat-val"><b>6</b></div></div><div class="stat"><div class="stat-label">Variants</div><div class="stat-val"><b>84</b></div></div><div class="stat"><div class="stat-label">Uplift</div><div class="stat-val"><b>+38%</b></div><div class="stat-sub">vs generic</div></div></div><div class="grid-3">${personas.map(p=>`<div class="persona" onclick="toast('${p.n}')"><div class="persona-head"><div class="persona-avatar" style="background:${p.color};color:white;">${p.av}</div><div><div class="persona-name">${p.n}</div><div class="persona-desc">${p.desc}</div></div></div><div class="persona-stats"><div class="ps"><div class="pv">${p.size}</div><div class="pl">Size</div></div><div class="ps"><div class="pv">${p.ltv}</div><div class="pl">LTV</div></div><div class="ps"><div class="pv">${p.eng}</div><div class="pl">Eng.</div></div></div></div>`).join('')}</div><div class="card card-gold"><div class="card-header"><h3><span class="ai-icon-sm">&#9672;</span> Preview — "Valentine's Escape"</h3></div><div class="card-body"><p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">AI adapts the same campaign per segment:</p><div class="grid-3">${[{s:'High Rollers',t:'Exclusive',m:'"Private suite awaits — champagne & R25K casino credit."',ch:'Email + SMS'},{s:'Casual Players',t:'Fun',m:'"WIN R50K! Play slots this Valentine\'s weekend."',ch:'Social + Push'},{s:'Resort Guests',t:'Romantic',m:'"Packages from R2,999pp with spa & dinner."',ch:'Email + Web'}].map(v=>`<div style="background:rgba(255,255,255,0.02);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,0.04);"><div style="font-weight:600;margin-bottom:4px;">${v.s}</div><div style="font-size:10px;color:var(--teal-light);margin-bottom:6px;">${v.t} &middot; ${v.ch}</div><div style="font-size:12px;font-style:italic;color:var(--text-dim);line-height:1.5;">${v.m}</div></div>`).join('')}</div></div></div>`;}
+
+function pgLoy(){return `${ban()}<div class="page-header"><h1>Loyalty <b>Builder</b></h1><div class="header-actions"><button class="btn btn-gold" onclick="toast('Creating journey...')">+ New Journey</button></div></div><div class="stats-row"><div class="stat"><div class="stat-label">Journeys</div><div class="stat-val"><b>8</b></div></div><div class="stat"><div class="stat-label">Engaged</div><div class="stat-val"><b>45K</b></div></div><div class="stat"><div class="stat-label">Retention</div><div class="stat-val"><b>78%</b></div><div class="stat-sub"><span class="up">+5%</span></div></div><div class="stat"><div class="stat-label">Revenue</div><div class="stat-val"><b>R38M</b></div></div></div><div class="card card-gold" style="margin-bottom:20px;"><div class="card-header"><h3>VIP Re-engagement Journey</h3><span class="tag tag-green">Active</span></div><div class="card-body"><div class="journey">${[{i:'&#128140;',l:'30d Inactive',s:'done'},{i:'&#9993;',l:'Email',s:'done'},{i:'&#128241;',l:'SMS Offer',s:'done'},{i:'&#127183;',l:'R5K Credit',s:'active'},{i:'&#9734;',l:'VIP Welcome',s:''},{i:'&#127873;',l:'Tier Upgrade',s:''},{i:'&#128200;',l:'Track LTV',s:''}].map((s,i,a)=>`<div class="j-step ${s.s}"><div class="j-circle">${s.i}</div><div class="j-label">${s.l}</div></div>${i<a.length-1?'<div class="j-arrow">&rarr;</div>':''}`).join('')}</div><div style="margin-top:16px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px;">${[{l:'Entered',v:'3,420'},{l:'Opened',v:'2,156'},{l:'Clicked',v:'986'},{l:'Visited',v:'412'},{l:'Re-activated',v:'341'}].map(m=>`<div class="stat" style="padding:10px;"><div class="stat-label" style="font-size:9px;">${m.l}</div><div style="font-size:16px;font-weight:800;color:var(--teal-light);">${m.v}</div></div>`).join('')}</div></div></div><div class="grid-2"><div class="card"><div class="card-header"><h3>Active Journeys</h3></div><div class="card-body"><table class="tbl"><thead><tr><th>Journey</th><th>Status</th><th>Members</th><th>Conv.</th></tr></thead><tbody>${[{n:'VIP Re-engage',s:'tag-green',st:'Active',m:'3.4K',c:'83%'},{n:'New Welcome',s:'tag-green',st:'Active',m:'8.2K',c:'62%'},{n:'Birthday',s:'tag-green',st:'Active',m:'12K',c:'71%'},{n:'Win-back',s:'tag-orange',st:'Paused',m:'5.1K',c:'34%'},{n:'Tier Push',s:'tag-blue',st:'Scheduled',m:'2.8K',c:'—'}].map(j=>`<tr><td style="font-weight:500;">${j.n}</td><td><span class="tag ${j.s}">${j.st}</span></td><td>${j.m}</td><td style="font-weight:600;color:var(--teal-light);">${j.c}</td></tr>`).join('')}</tbody></table></div></div><div class="card card-gold"><div class="card-header"><h3><span class="ai-icon-sm">&#9672;</span> AI Recommendations</h3></div><div class="card-body" style="font-size:12px;color:var(--text-muted);line-height:1.7;">${[{t:'Trigger win-back at 21 days, not 60 — 28% better reactivation.',b:'Timing'},{t:'SMS outperforms email 2.3x for casino re-engagement.',b:'Channel'},{t:'Free play voucher +45% visit rate vs discount-only.',b:'Offer'}].map(r=>`<div style="margin-bottom:10px;padding:10px;background:rgba(212,168,67,0.04);border-radius:8px;border:1px solid rgba(232,200,107,0.1);"><span class="ai-icon-sm" style="display:inline-flex;margin-right:6px;">&#9672;</span><b style="color:var(--text);">${r.b}:</b> ${r.t}</div>`).join('')}</div></div></div>`;}
+
+function pgAna(){const p=cp();return `${ban()}<div class="page-header"><h1>Campaign <b>Analytics</b></h1><div class="header-actions"><button class="btn btn-dark" onclick="toast('Exported')">&#128196; Export</button><div class="tabs"><div class="tab active" onclick="toggleTab(this)">30D</div><div class="tab" onclick="toggleTab(this)">90D</div><div class="tab" onclick="toggleTab(this)">YTD</div></div></div></div><div class="stats-row cols-5"><div class="stat"><div class="stat-label">Impressions</div><div class="stat-val"><b>${PM[curProp].imp}</b></div><div class="stat-sub"><span class="up">+${PM[curProp].impGr}%</span></div></div><div class="stat"><div class="stat-label">CTR</div><div class="stat-val"><b>${p.eng}</b></div></div><div class="stat"><div class="stat-label">Conversions</div><div class="stat-val"><b>${p.conv}</b></div></div><div class="stat"><div class="stat-label">Spend</div><div class="stat-val"><b>${PM[curProp].spend}</b></div></div><div class="stat"><div class="stat-label">ROI</div><div class="stat-val"><b>${p.roi}</b></div></div></div><div class="grid-2"><div class="card"><div class="card-header"><h3>Channel Performance</h3></div><div class="card-body"><div class="bars" style="height:130px;">${barChart(['Social','Email','Display','Search','Video','SMS'],[72,58,43,38,65,28])}</div></div></div><div class="card"><div class="card-header"><h3>Channel Split</h3></div><div class="card-body">${donut([{n:'Social',v:35,c:'var(--blue)'},{n:'Email',v:22,c:'var(--green)'},{n:'Display',v:16,c:'var(--purple)'},{n:'Video',v:14,c:'var(--red)'},{n:'Other',v:13,c:'var(--text-muted)'}])}</div></div></div><div class="grid-2"><div class="card"><div class="card-header"><h3>Engagement Heatmap</h3><span class="ai-badge"><span class="ai-icon-sm">&#9672;</span> AI Optimised</span></div><div class="card-body">${heatHTML()}</div></div><div class="card"><div class="card-header"><h3>ROI Trend</h3><span class="tag tag-green">+18%</span></div><div class="card-body"><div class="line-chart"><svg viewBox="0 0 500 140" preserveAspectRatio="none"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(232,200,107,0.25)"/><stop offset="100%" stop-color="rgba(232,200,107,0)"/></linearGradient></defs><path d="M0,110 C80,95 160,85 240,60 C320,40 400,45 500,15" fill="none" stroke="var(--teal-light)" stroke-width="2.5"/><path d="M0,110 C80,95 160,85 240,60 C320,40 400,45 500,15 L500,140 L0,140 Z" fill="url(#lg)"/><path d="M0,115 C160,110 320,100 500,90" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="4,4"/></svg></div><div class="line-labels"><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span></div></div></div></div><div class="card"><div class="card-header"><h3>Property Performance</h3></div><div class="card-body"><table class="tbl"><thead><tr><th>Property</th><th>Impressions</th><th>Engagement</th><th>Conv.</th><th>ROI</th><th>Revenue</th></tr></thead><tbody>${(curProp==='all'?P.slice(1):P.filter(x=>x.id===curProp)).map(p=>`<tr><td><div class="name-cell"><div class="prop-dot" style="background:${p.color}"></div>${p.name}</div></td><td>${PM[p.id].imp}</td><td>${p.eng}</td><td>${p.conv}</td><td style="color:var(--teal-light);font-weight:600;">${p.roi}</td><td style="font-weight:600;">${p.rev}</td></tr>`).join('')}</tbody></table></div></div>`;}
+
+function pgIntel(){return `${ban()}<div class="page-header"><h1>Competitive <b>Intelligence</b></h1><div class="header-actions"><span class="ai-badge"><span class="ai-icon-sm">&#9672;</span> Real-time</span></div></div><div class="stats-row cols-5"><div class="stat"><div class="stat-label">Sentiment</div><div class="stat-val" style="color:var(--green);"><b>76%</b></div><div class="stat-sub">Positive</div></div><div class="stat"><div class="stat-label">Share of Voice</div><div class="stat-val"><b>34%</b></div><div class="stat-sub"><span class="up">+3%</span></div></div><div class="stat"><div class="stat-label">Mentions</div><div class="stat-val"><b>12.8K</b></div></div><div class="stat"><div class="stat-label">Competitor Alerts</div><div class="stat-val" style="color:var(--orange);"><b>4</b></div></div><div class="stat"><div class="stat-label">AI Insights</div><div class="stat-val"><b>6</b></div></div></div><div class="grid-2"><div class="card"><div class="card-header"><h3>Sentiment Analysis</h3></div><div class="card-body">${[{n:'Sun International',v:76,neg:8},{n:'Tsogo Sun',v:68,neg:10},{n:'Hollywoodbets',v:72,neg:9},{n:'Peermont',v:55,neg:15}].map(c=>`<div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span>${c.n}</span><span style="color:${c.v>60?'var(--green)':'var(--orange)'};">${c.v}%</span></div><div class="sentiment-bar"><div class="sent-pos" style="width:${c.v}%;"></div><div class="sent-neu" style="width:${100-c.v-c.neg}%;"></div><div class="sent-neg" style="width:${c.neg}%;"></div></div></div>`).join('')}</div></div><div class="card"><div class="card-header"><h3>Share of Voice</h3></div><div class="card-body">${donut([{n:'Sun International',v:34,c:'var(--teal-light)'},{n:'Tsogo Sun',v:28,c:'var(--blue)'},{n:'Hollywoodbets',v:22,c:'var(--red)'},{n:'Peermont',v:16,c:'var(--purple)'}])}</div></div></div><div class="grid-2"><div class="card"><div class="card-header"><h3>Trending Topics</h3></div><div class="card-body">${['Valentine\'s Specials','Casino Jackpots','Online Betting','Resort Packages','Loyalty Programs','Live Events'].map((t,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);"><span style="font-size:14px;font-weight:700;color:var(--teal-light);width:24px;">#${i+1}</span><span style="font-size:12px;">${t}</span><span class="tag tag-${i<2?'green':'blue'}" style="margin-left:auto;">${i<2?'Trending':'Stable'}</span></div>`).join('')}</div></div><div class="card card-gold"><div class="card-header"><h3><span class="ai-icon-sm">&#9672;</span> Competitor Alerts</h3></div><div class="card-body">${[{t:'Tsogo Sun Valentine\'s flash sale',d:'2h ago',s:'orange'},{t:'Hollywoodbets +40% social spend',d:'6h ago',s:'red'},{t:'Peermont new loyalty tier',d:'1d ago',s:'orange'},{t:'Gambling regulations update',d:'2d ago',s:'blue'}].map(a=>`<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);"><span class="tag tag-${a.s}" style="flex-shrink:0;margin-top:2px;">Alert</span><div><div style="font-size:12px;font-weight:500;">${a.t}</div><div style="font-size:10px;color:var(--text-muted);">${a.d}</div></div></div>`).join('')}</div></div></div>`;}
+
+// MODAL
+function openModal(t){const m=document.getElementById('modal-content');if(t==='promo'){m.innerHTML=`<h2>New Promotion</h2><div class="mf"><label>Name</label><input placeholder="e.g. Payday Jackpot"></div><div class="mf"><label>Property</label><select>${P.map(p=>'<option>'+p.name+'</option>').join('')}</select></div><div class="mf"><label>Date</label><input type="date"></div><div class="mf"><label>Type</label><select><option>Gaming</option><option>Hotel & Resort</option><option>Loyalty</option><option>Brand</option><option>Online</option></select></div><div class="mf"><label>Description</label><textarea placeholder="Brief..."></textarea></div><div style="background:rgba(212,168,67,0.06);border:1px solid rgba(232,200,107,0.12);border-radius:10px;padding:10px;margin-bottom:14px;display:flex;gap:8px;font-size:11px;color:var(--text-muted);line-height:1.5;"><span class="ai-icon-sm">&#9672;</span><div><b style="color:var(--teal-light);">AI Tip:</b> Saturday promos see 34% higher engagement at casinos.</div></div><div class="modal-actions"><button class="btn btn-dark" onclick="closeModal()">Cancel</button><button class="btn btn-gold" onclick="closeModal();toast('Promotion created — AI generating...')">Create</button></div>`;}document.getElementById('modal-bg').classList.add('show');}
+function closeModal(){document.getElementById('modal-bg').classList.remove('show');}
+
+// TOAST
+function toast(t){const el=document.getElementById('toast');document.getElementById('toast-text').textContent=t;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),3000);}
+
+// TAB & CHIP TOGGLE
+function toggleTab(el){
+  const parent=el.parentElement;
+  parent.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const label=el.textContent;
+  // Handle dashboard performance tabs
+  if(label==='Engagement'||label==='Conversions'){
+    const barsEl=parent.closest('.card').querySelector('.bars');
+    if(barsEl){
+      if(label==='Conversions') barsEl.innerHTML=barChart(['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],[18,14,22,20,31,38,28]);
+      else barsEl.innerHTML=barChart(['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],[45,38,52,48,67,82,71]);
+    }
+  }
+  // Handle analytics time period tabs
+  if(label==='30D'||label==='90D'||label==='YTD'){
+    toast('Showing '+label+' data');renderPage();
+  }
+  // Handle approvals view tabs
+  if(label==='Board'||label==='List'||label==='Timeline'){
+    toast(label+' view selected');
+  }
+  // Handle calendar view tabs
+  if(label==='Month'||label==='Week'||label==='List'){
+    toast(label+' view selected');
+  }
+}
+function toggleChip(el){el.classList.toggle('active');}
+
+// GLOBAL SEARCH
+function initSearch(){
+  const s=document.querySelector('.global-search');
+  if(s){s.removeAttribute('onclick');s.addEventListener('input',function(){
+    if(this.value.length>1)toast('Searching: '+this.value+'...');
+  });s.addEventListener('focus',function(){toast('Type to search campaigns, properties, assets...');});}
+}
+
+init();
+initSearch();
+</script>
+</body>
+</html>
